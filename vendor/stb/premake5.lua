@@ -4,8 +4,8 @@ project "stb"
     kind "StaticLib"
 
     location ""
-    targetdir ("bin/" .. outputdir .. "/%{prj.name}")
-    objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
+    targetdir ("../../bin/" .. outputdir .. "/%{prj.name}")
+    objdir ("../../bin-int/" .. outputdir .. "/%{prj.name}")
 
     filter ""
 
