@@ -45,8 +45,14 @@ project "ray_tracer"
         "utils/src"
     }
 
+    -- for #include with <>
+    sysincludedirs {
+        "vendor/stb"
+    }
+
     links {
-        "utils"
+        "utils",
+        "stb"
     }
 
 project "utils"
@@ -63,3 +69,5 @@ project "utils"
         "%{prj.name}/src/**.h",
         "%{prj.name}/src/**.cpp"
     }
+
+include "vendor/stb"
