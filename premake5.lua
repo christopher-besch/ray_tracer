@@ -52,26 +52,24 @@ project "ray_tracer"
     }
 
     links {
-        "utils",
-        "stb"
+        "utils"
     }
-    
+
 project "utils"
     language "C++"
     architecture "x86_64"
     cppdialect "C++14"
     kind "StaticLib"
-    
+
     location "%{prj.name}"
     targetdir ("bin/" .. outputdir .. "/%{prj.name}")
     objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
-    
+
     files {
         "%{prj.name}/src/**.h",
         "%{prj.name}/src/**.cpp"
     }
     
     include "vendor/stb"
-    -- include "vendor/SDL"
     
     -- statically linked but not compiled with premake5

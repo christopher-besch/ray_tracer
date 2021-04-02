@@ -1,85 +1,51 @@
-// #include <iostream>
-// #include <fstream>
-// #include <sstream>
-// #include <memory>
-//
-// #define STB_IMAGE_IMPLEMENTATION
-// #include <stb_image.h>
-//
-// #define STBI_MSC_SECURE_CRT
-// #define STB_IMAGE_WRITE_IMPLEMENTATION
-// #include <stb_image_write.h>
-//
-// int main()
-// {
-//     const int width = 200;
-//     const int height = 100;
-//     // no alpha
-//     const int channel_num = 3;
-//
-//     std::unique_ptr<uint8_t[]> pixels = std::make_unique<uint8_t[]>(width * height * channel_num) > ;
-//
-//     int index = 0;
-//     for (int j = height - 1; j >= 0; --j)
-//     {
-//         for (int i = 0; i < width; ++i)
-//         {
-//             float r = (float)i / (float)width;
-//             float g = (float)j / (float)height;
-//             float b = 0.2f;
-//             int ir = int(255.99 * r);
-//             int ig = int(255.99 * g);
-//             int ib = int(255.99 * b);
-//
-//             pixels[index++] = ir;
-//             pixels[index++] = ig;
-//             pixels[index++] = ib;
-//         }
-//     }
-//
-//     stbi_write_png("out.png", width, height, channel_num, reinterpret_cast<const void *>(pixels), width * channel_num);
-//
-//     return 0;
-// }
-
 #include <iostream>
-#include <SDL.h>
+#include <fstream>
+#include <sstream>
+#include <memory>
 
-int main(int argc, char *argv[])
+#define STB_IMAGE_IMPLEMENTATION
+#include <stb_image.h>
+#define STBI_MSC_SECURE_CRT
+#define STB_IMAGE_WRITE_IMPLEMENTATION
+#include <stb_image_write.h>
+
+#include "Vector.h"
+
+int main()
 {
-    if (SDL_Init(SDL_INIT_EVERYTHING) < 0)
+    // let's be friendly to the compiler
+    constexpr int width = 200;
+    constexpr int height = 100;
+    // no alpha
+    constexpr int channel_count = 3;
+
+    // uint8_t *pixels = new uint8_t[width * height * channel_num];
+    std::unique_ptr<uint8_t[]> pixels = std::make_unique<uint8_t[]>(width * height * channel_count);
+
+    int index = 0;
+    for (float y = height - 1; y >= 0; --y)
     {
-        std::cout << "SDL initialization failed. SDL Error: " << SDL_GetError();
+        for (float x = 0; x < width; ++x)
+        {
+            float r = x / width;
+            float g = y / height;
+            float b = 0.2f;
+            uint8_t ir = ceil(255.0f * r);
+            uint8_t ig = ceil(255.0f * g);
+            uint8_t ib = ceil(255.0f * b);
+
+            pixels[index++] = ir;
+            pixels[index++] = ig;
+            pixels[index++] = ib;
+        }
     }
-    else
-    {
-        std::cout << "SDL initialization succeeded!";
-    }
+
+    // stbi_write_png("out.png", width, height, channel_num, reinterpret_cast<const void *>(&pixels[0]), width * channel_num);
+    stbi_write_png("out.png", width, height, channel_count, pixels.get(), width * channel_count);
+
+    Vec3 a(1, 2, 3);
+
+    std::cout << a[1] << std::endl;
 
     return 0;
 }
-
-/*
-project "SDL"
-    language "C"
-    architecture "x86_64"
-    kind "StaticLib"
-
-    location ""
-    targetdir ("../../bin/" .. outputdir .. "/%{prj.name}")
-    objdir ("../../bin-int/" .. outputdir .. "/%{prj.name}")
-
-    -- all files that are included or compiled = all files that are visible to the preprocessor/compiler/linker and make and stuff
-    files
-    {
-        "src/**.h",
-        "include/**.c"
-    }
-
-    -- for #include paths with ""
-    includedirs {
-        "src",
-        "include"
-    }
-
-*/
