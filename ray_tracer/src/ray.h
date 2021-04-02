@@ -11,7 +11,7 @@ struct Ray
     Ray(const Point3 &origin, const Vec3 &inclination)
         : origin(origin), inclination(inclination) {}
 
-    Point3 at(double lambda)
+    Point3 at(double lambda) const
     {
         return origin + lambda * inclination;
     }

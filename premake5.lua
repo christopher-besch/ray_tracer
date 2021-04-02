@@ -52,7 +52,8 @@ project "ray_tracer"
     }
 
     links {
-        "utils"
+        "utils",
+        "stb"
     }
 
 project "utils"
@@ -70,6 +71,4 @@ project "utils"
         "%{prj.name}/src/**.cpp"
     }
     
-    include "vendor/stb"
-    
-    -- statically linked but not compiled with premake5
+include "vendor/stb"
