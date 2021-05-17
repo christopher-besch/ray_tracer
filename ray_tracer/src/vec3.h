@@ -18,25 +18,34 @@ struct Vec3
     };
 
     Vec3()
-        : e{0, 0, 0} {}
+        : e { 0, 0, 0 } {}
     Vec3(double x, double y, double z)
-        : e{x, y, z} {}
+        : e { x, y, z } {}
 
-    Vec3 operator-() const { return Vec3({-x, -y, -z}); }
-    double operator[](int i) const { return e[i]; }
-    double &operator[](int i) { return e[i]; }
+    Vec3 operator-() const
+    {
+        return Vec3({ -x, -y, -z });
+    }
+    double operator[](int i) const
+    {
+        return e[i];
+    }
+    double& operator[](int i)
+    {
+        return e[i];
+    }
 
     // utility functions
-    Vec3 operator+(const Vec3 &other) const
+    Vec3 operator+(const Vec3& other) const
     {
         return Vec3(x + other.x, y + other.y, z + other.z);
     }
-    Vec3 operator-(const Vec3 &other) const
+    Vec3 operator-(const Vec3& other) const
     {
         return Vec3(x - other.x, y - other.y, z - other.z);
     }
     // very very weird
-    Vec3 operator*(const Vec3 &other) const
+    Vec3 operator*(const Vec3& other) const
     {
         return Vec3(x * other.x, y * other.y, z * other.z);
     }
@@ -49,28 +58,28 @@ struct Vec3
         return *this * (1 / scalar);
     }
 
-    Vec3 &operator+=(const Vec3 &other)
+    Vec3& operator+=(const Vec3& other)
     {
         x += other.x;
         y += other.y;
         z += other.z;
         return *this;
     }
-    Vec3 &operator-=(const Vec3 &other)
+    Vec3& operator-=(const Vec3& other)
     {
         x -= other.x;
         y -= other.y;
         z -= other.z;
         return *this;
     }
-    Vec3 &operator*=(const double scalar)
+    Vec3& operator*=(const double scalar)
     {
         x *= scalar;
         y *= scalar;
         z *= scalar;
         return *this;
     }
-    Vec3 &operator/=(const double num)
+    Vec3& operator/=(const double num)
     {
         x *= 1 / num;
         y *= 1 / num;
@@ -78,31 +87,31 @@ struct Vec3
         return *this;
     }
 
-    double magnitute_squared() const
+    double magnitude_squared() const
     {
         return x * x + y * y + z * z;
     }
     double magnitude() const
     {
-        return std::sqrt(magnitute_squared());
+        return std::sqrt(magnitude_squared());
     }
 };
 
 using Point3 = Vec3;
-using Color = Vec3;
+using Color  = Vec3;
 
 // commutative law
-inline Vec3 operator*(const double scalar, const Vec3 &vec)
+inline Vec3 operator*(const double scalar, const Vec3& vec)
 {
     return vec * scalar;
 }
-inline double dot_product(const Vec3 &a, const Vec3 &b)
+inline double dot_product(const Vec3& a, const Vec3& b)
 {
     return a.x * b.x +
            a.y * b.y +
            a.z * b.z;
 }
-inline Vec3 cross_product(const Vec3 &a, const Vec3 &b)
+inline Vec3 cross_product(const Vec3& a, const Vec3& b)
 {
     return Vec3(a.y * b.z - a.z * b.y,
                 a.z * b.x - a.x * b.z,
