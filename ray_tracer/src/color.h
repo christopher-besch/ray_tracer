@@ -1,17 +1,25 @@
 #pragma once
 
+#include "ray_tracer.h"
+
+#include <iostream>
 #include <memory>
+#include <vector>
 
 #include "vec3.h"
 
 // write pixel to pixels and increase index
-void write_color(std::unique_ptr<uint8_t[]>& pixels, int& index, Vec3& pixel)
+void write_color(std::vector<uint8_t>& pixels, Color pixel, int samples_per_pixel)
 {
+    pixel /= samples_per_pixel;
+
     // normalize
-    uint8_t ir      = ceil(255.0f * pixel.r);
-    uint8_t ig      = ceil(255.0f * pixel.g);
-    uint8_t ib      = ceil(255.0f * pixel.b);
-    pixels[index++] = ir;
-    pixels[index++] = ig;
-    pixels[index++] = ib;
+    // gamma correct for gamma=2.0
+    const uint8_t r = 256 * clamp(sqrt(pixel.r), 0.0, 0.999);
+    const uint8_t g = 256 * clamp(sqrt(pixel.g), 0.0, 0.999);
+    const uint8_t b = 256 * clamp(sqrt(pixel.b), 0.0, 0.999);
+
+    pixels.push_back(r);
+    pixels.push_back(g);
+    pixels.push_back(b);
 }

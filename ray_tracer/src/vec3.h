@@ -2,6 +2,8 @@
 
 #include <cmath>
 
+#include "random.h"
+
 struct Vec3
 {
     union
@@ -118,7 +120,27 @@ inline Vec3 cross_product(const Vec3& a, const Vec3& b)
                 a.x * b.y - a.y * b.x);
 }
 
-Vec3 unit_vector(Vec3 vec)
+inline Vec3 unit_vector(Vec3 vec)
 {
     return vec / vec.magnitude();
+}
+
+inline Vec3 random_vector()
+{
+    return Vec3(random_double(), random_double(), random_double());
+}
+
+inline Vec3 random_vector(double min, double max)
+{
+    return Vec3(random_double(min, max), random_double(min, max), random_double(min, max));
+}
+
+inline Vec3 random_in_unit_sphere()
+{
+    while (true)
+    {
+        Vec3 point = random_vector(-1, 1);
+        if (point.magnitude_squared() >= 1) continue;
+        return point;
+    }
 }
