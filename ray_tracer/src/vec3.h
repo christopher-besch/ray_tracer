@@ -47,7 +47,6 @@ struct Vec3
     {
         return Vec3(x - other.x, y - other.y, z - other.z);
     }
-    // very very weird
     Vec3 operator*(const Vec3& other) const
     {
         return Vec3(x * other.x, y * other.y, z * other.z);
@@ -128,6 +127,9 @@ inline Vec3 cross_product(const Vec3& a, const Vec3& b)
                 a.x * b.y - a.y * b.x);
 }
 
+///////////////////////
+// vector generators //
+///////////////////////
 inline Vec3 unit_vector(Vec3 vec)
 {
     return vec / vec.magnitude();
@@ -183,4 +185,14 @@ inline Vec3 refract(const Vec3& in, const Vec3& normal, double eta_in_over_eta_t
     Vec3   trans_perp     = eta_in_over_eta_trans * (in + cos_theta * normal);
     Vec3   trans_parallel = -sqrt(fabs(1.0 - trans_perp.magnitude_squared())) * normal;
     return trans_perp + trans_parallel;
+}
+
+inline Vec3 random_in_unit_disk()
+{
+    while (true)
+    {
+        Vec3 p(random_double(-1, 1), random_double(-1, 1), 0);
+        if (p.magnitude_squared() >= 1.0) continue;
+        return p;
+    }
 }

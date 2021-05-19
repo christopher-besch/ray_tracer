@@ -9,31 +9,46 @@ private:
     Point3 m_lower_left_corner;
     Vec3   m_horizontal;
     Vec3   m_vertical;
+    Vec3   m_u, m_v, m_w;
+    double m_lens_radius;
 
 public:
-    Camera()
+    // vfov: vertical field-of-view in degrees
+    // vup: view up
+    Camera(Point3 lookfrom, Point3 lookat, Vec3 vup, double vfov, double aspect_ratio, double aperture, double focus_dist)
     {
-        // axis:
-        //  x: to the right
-        //  y: up
-        //  z: to behind camera
-        double aspect_ratio    = 16.0 / 9.0;
-        double viewport_height = 2.0;
+        double theta = degrees_to_radians(vfov);
+        // half viewport width
+        double h               = tan(theta / 2);
+        double viewport_height = 2.0 * h;
         double viewport_width  = aspect_ratio * viewport_height;
-        double focal_length    = 1.0;
 
-        m_origin            = Point3(0.0, 0.0, 0.0);
-        m_horizontal        = Vec3(viewport_width, 0.0, 0.0);
-        m_vertical          = Vec3(0.0, viewport_height, 0.0);
-        m_lower_left_corner = m_origin - m_horizontal / 2 - m_vertical / 2 - Vec3(0, 0, focal_length);
+        // camera looks in -w direction
+        m_w = unit_vector(lookfrom - lookat);
+        // side axis
+        m_u = unit_vector(cross_product(vup, m_w));
+        // up axis
+        m_v = cross_product(m_w, m_u);
+
+        m_origin = lookfrom;
+        // move viewplane into space (focus_dist deep)
+        m_horizontal        = focus_dist * viewport_width * m_u;
+        m_vertical          = focus_dist * viewport_height * m_v;
+        m_lower_left_corner = m_origin - m_horizontal / 2 - m_vertical / 2 - focus_dist * m_w;
+
+        m_lens_radius = aperture / 2;
     }
 
-    Ray get_ray(double x, double y) const
+    Ray get_ray(double s, double t) const
     {
+        Vec3 random_vec = m_lens_radius * random_in_unit_disk();
+        Vec3 offset     = m_u * random_vec.x + m_v * random_vec.y;
+
         // from origin; to lower left corner of viewport but to the right and up
-        // to current pixel fyi: ray only touches corners of viewport; penetrates
+        // to current pixel; fyi: ray only touches corners of viewport; penetrates
         // middle -> gradient is not horizontally constant -> you can see a
         // curvature in the background
-        return Ray(m_origin, m_lower_left_corner + x * m_horizontal + y * m_vertical - m_origin);
+        return Ray(m_origin + offset,
+                   m_lower_left_corner + s * m_horizontal + t * m_vertical - m_origin - offset);
     }
 };
