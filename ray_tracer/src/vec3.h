@@ -168,3 +168,19 @@ inline Vec3 random_in_hemisphere(const Vec3& normal)
     else
         return -in_unit_sphere;
 }
+
+// reflect <incoming> off of surface with normal <normal>
+inline Vec3 reflect(const Vec3& incoming, const Vec3& normal)
+{
+    // scale normal with twice depth of virtual penetration
+    return incoming - 2 * dot_product(incoming, normal) * normal;
+}
+
+// return refracted vector according to incidence and transmission indices of refraction
+inline Vec3 refract(const Vec3& in, const Vec3& normal, double eta_in_over_eta_trans)
+{
+    double cos_theta      = fmin(dot_product(-in, normal), 1.0);
+    Vec3   trans_perp     = eta_in_over_eta_trans * (in + cos_theta * normal);
+    Vec3   trans_parallel = -sqrt(fabs(1.0 - trans_perp.magnitude_squared())) * normal;
+    return trans_perp + trans_parallel;
+}

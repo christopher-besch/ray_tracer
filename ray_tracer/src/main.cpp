@@ -15,6 +15,7 @@
 #include "camera.h"
 #include "color.h"
 #include "hittable_list.h"
+#include "material.h"
 #include "sphere.h"
 
 Color ray_color(const Ray& ray, const Hittable& world, int depth)
@@ -23,21 +24,18 @@ Color ray_color(const Ray& ray, const Hittable& world, int depth)
 
     // no more light
     if (depth == 0)
-        return Color(0, 0, 0);
+        return Color(0.0, 0.0, 0.0);
 
-    // hit
     // fixing shadow acne
     if (world.hit(ray, 0.001, infinity, record))
     {
-#if 0
-        // trace reflected ray from within sphere at normal, kissing last hit
-        Point3 target = record.hit_point + record.normal + random_unit_vector();
-#else
-        // trace reflected ray from within hemisphere of normal
-        Point3 target = record.hit_point + random_in_hemisphere(record.normal);
-#endif
-        // 0.5 reflectivity
-        return 0.5 * ray_color(Ray(record.hit_point, target - record.hit_point), world, depth - 1);
+        Ray   scattered;
+        Color attenuation;
+        if (record.material->scatter(ray, record, attenuation, scattered))
+            // shoot reflected ray
+            return attenuation * ray_color(scattered, world, depth - 1);
+        // absorb ray
+        return Color(0.0, 0.0, 0.0);
     }
 
     // or background
@@ -60,8 +58,8 @@ int main()
     constexpr long   image_width  = static_cast<int>(image_height * aspect_ratio);
     // no alpha
     constexpr int channel_count     = 3;
-    constexpr int samples_per_pixel = 1;
-    constexpr int max_depth         = 10;
+    constexpr int samples_per_pixel = 50;
+    constexpr int max_depth         = 5;
 
     std::vector<uint8_t> pixels;
     pixels.reserve(image_width * image_height * channel_count);
@@ -70,8 +68,16 @@ int main()
     // world //
     ///////////
     HittableList world;
-    world.add(std::make_shared<Sphere>(Point3(0.0, 0.0, -1.0), 0.5));
-    world.add(std::make_shared<Sphere>(Point3(0.0, -100.5, -1.0), 100.0));
+
+    std::shared_ptr<Material> material_ground = std::make_shared<Lambertian>(Color(0.8, 0.8, 0.0));
+    std::shared_ptr<Material> material_center = std::make_shared<Lambertian>(Color(0.1, 0.2, 0.5));
+    std::shared_ptr<Material> material_left   = std::make_shared<Dielectric>(1.0);
+    std::shared_ptr<Material> material_right  = std::make_shared<Metal>(Color(0.8, 0.6, 0.2), 0.0);
+
+    world.add(std::make_shared<Sphere>(Point3(0.0, -100.5, -1.0), 100.0, material_ground));
+    world.add(std::make_shared<Sphere>(Point3(0.0, 0.0, -1.0), 0.5, material_center));
+    world.add(std::make_shared<Sphere>(Point3(-1.0, 0.0, -1.0), 0.4, material_left));
+    world.add(std::make_shared<Sphere>(Point3(1.0, 0.0, -1.0), 0.5, material_right));
 
 
     ////////////

@@ -6,19 +6,15 @@
             "-DDEBUG",
             "-DIDE",
             "-DLINUX",
-            "-Isrc",
-            "-I../utils/src",
-            "-isystem",
-            "../vendor/stb",
             "-m64",
             "-g",
             "-std=c++14",
             "-o",
-            "../bin-int/Debug-linux-x86_64/ray_tracer/sphere.o",
-            "src/sphere.cpp"
+            "../bin-int/Debug-linux-x86_64/utils/console.o",
+            "src/console.cpp"
         ],
-        "directory": "/home/chris/ray_tracer/ray_tracer",
-        "file": "src/sphere.cpp"
+        "directory": "/home/chris/files/cpp/ray_tracer/utils",
+        "file": "src/console.cpp"
     },
     {
         "arguments": [
@@ -27,19 +23,15 @@
             "-DDEBUG",
             "-DIDE",
             "-DLINUX",
-            "-Isrc",
-            "-I../utils/src",
-            "-isystem",
-            "../vendor/stb",
             "-m64",
             "-g",
             "-std=c++14",
             "-o",
-            "../bin-int/Debug-linux-x86_64/ray_tracer/main.o",
-            "src/main.cpp"
+            "../bin-int/Debug-linux-x86_64/utils/trie.o",
+            "src/trie.cpp"
         ],
-        "directory": "/home/chris/ray_tracer/ray_tracer",
-        "file": "src/main.cpp"
+        "directory": "/home/chris/files/cpp/ray_tracer/utils",
+        "file": "src/trie.cpp"
     },
     {
         "arguments": [
@@ -59,7 +51,7 @@
             "../bin-int/Debug-linux-x86_64/ray_tracer/hittable_list.o",
             "src/hittable_list.cpp"
         ],
-        "directory": "/home/chris/ray_tracer/ray_tracer",
+        "directory": "/home/chris/files/cpp/ray_tracer/ray_tracer",
         "file": "src/hittable_list.cpp"
     },
     {
@@ -69,15 +61,19 @@
             "-DDEBUG",
             "-DIDE",
             "-DLINUX",
+            "-Isrc",
+            "-I../utils/src",
+            "-isystem",
+            "../vendor/stb",
             "-m64",
             "-g",
             "-std=c++14",
             "-o",
-            "../bin-int/Debug-linux-x86_64/utils/console.o",
-            "src/console.cpp"
+            "../bin-int/Debug-linux-x86_64/ray_tracer/main.o",
+            "src/main.cpp"
         ],
-        "directory": "/home/chris/ray_tracer/utils",
-        "file": "src/console.cpp"
+        "directory": "/home/chris/files/cpp/ray_tracer/ray_tracer",
+        "file": "src/main.cpp"
     },
     {
         "arguments": [
@@ -86,14 +82,18 @@
             "-DDEBUG",
             "-DIDE",
             "-DLINUX",
+            "-Isrc",
+            "-I../utils/src",
+            "-isystem",
+            "../vendor/stb",
             "-m64",
             "-g",
             "-std=c++14",
             "-o",
-            "../bin-int/Debug-linux-x86_64/utils/trie.o",
-            "src/trie.cpp"
+            "../bin-int/Debug-linux-x86_64/ray_tracer/sphere.o",
+            "src/sphere.cpp"
         ],
-        "directory": "/home/chris/ray_tracer/utils",
-        "file": "src/trie.cpp"
+        "directory": "/home/chris/files/cpp/ray_tracer/ray_tracer",
+        "file": "src/sphere.cpp"
     }
 ]
