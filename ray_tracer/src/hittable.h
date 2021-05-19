@@ -19,10 +19,11 @@ struct HitRecord
         // is ray outside object?
         front_face = dot_product(ray.inclination, outward_normal) < 0;
         normal     = front_face ? outward_normal : -outward_normal;
-    };
+    }
+};
 
-    class Hittable
-    {
-    public:
-        virtual bool hit(const Ray& ray, double t_min, double t_max, HitRecord& record) const = 0;
-    };
+class Hittable
+{
+public:
+    virtual bool hit(const Ray& ray, double t_min, double t_max, HitRecord& record) const = 0;
+};
