@@ -26,9 +26,17 @@ Color ray_color(const Ray& ray, const Hittable& world, int depth)
         return Color(0, 0, 0);
 
     // hit
-    if (world.hit(ray, 0, infinity, record))
+    // fixing shadow acne
+    if (world.hit(ray, 0.001, infinity, record))
     {
-        Point3 target = record.hit_point + record.normal + random_in_unit_sphere();
+#if 0
+        // trace reflected ray from within sphere at normal, kissing last hit
+        Point3 target = record.hit_point + record.normal + random_unit_vector();
+#else
+        // trace reflected ray from within hemisphere of normal
+        Point3 target = record.hit_point + random_in_hemisphere(record.normal);
+#endif
+        // 0.5 reflectivity
         return 0.5 * ray_color(Ray(record.hit_point, target - record.hit_point), world, depth - 1);
     }
 
@@ -48,12 +56,12 @@ int main()
     // image //
     ///////////
     constexpr double aspect_ratio = 16.0 / 9.0;
-    constexpr long   image_height = 720;
+    constexpr long   image_height = 420;
     constexpr long   image_width  = static_cast<int>(image_height * aspect_ratio);
     // no alpha
     constexpr int channel_count     = 3;
-    constexpr int samples_per_pixel = 10;
-    constexpr int max_depth         = 50;
+    constexpr int samples_per_pixel = 1;
+    constexpr int max_depth         = 10;
 
     std::vector<uint8_t> pixels;
     pixels.reserve(image_width * image_height * channel_count);

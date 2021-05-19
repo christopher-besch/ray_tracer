@@ -6,6 +6,7 @@
 
 struct Vec3
 {
+    // that's also a union
     union
     {
         double e[3];
@@ -51,11 +52,11 @@ struct Vec3
     {
         return Vec3(x * other.x, y * other.y, z * other.z);
     }
-    Vec3 operator*(const double scalar) const
+    Vec3 operator*(double scalar) const
     {
         return Vec3(x * scalar, y * scalar, z * scalar);
     }
-    Vec3 operator/(const double scalar) const
+    Vec3 operator/(double scalar) const
     {
         return *this * (1 / scalar);
     }
@@ -74,14 +75,14 @@ struct Vec3
         z -= other.z;
         return *this;
     }
-    Vec3& operator*=(const double scalar)
+    Vec3& operator*=(double scalar)
     {
         x *= scalar;
         y *= scalar;
         z *= scalar;
         return *this;
     }
-    Vec3& operator/=(const double num)
+    Vec3& operator/=(double num)
     {
         x *= 1 / num;
         y *= 1 / num;
@@ -103,7 +104,7 @@ using Point3 = Vec3;
 using Color  = Vec3;
 
 // commutative law
-inline Vec3 operator*(const double scalar, const Vec3& vec)
+inline Vec3 operator*(double scalar, const Vec3& vec)
 {
     return vec * scalar;
 }
@@ -143,4 +144,20 @@ inline Vec3 random_in_unit_sphere()
         if (point.magnitude_squared() >= 1) continue;
         return point;
     }
+}
+
+// on surface of unit sphere
+inline Vec3 random_unit_vector()
+{
+    return unit_vector(random_in_unit_sphere());
+}
+
+inline Vec3 random_in_hemisphere(const Vec3& normal)
+{
+    Vec3 in_unit_sphere = random_in_unit_sphere();
+    // in same hemisphere as normal
+    if (dot_product(in_unit_sphere, normal) > 0.0)
+        return in_unit_sphere;
+    else
+        return -in_unit_sphere;
 }
