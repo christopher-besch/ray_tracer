@@ -98,6 +98,13 @@ struct Vec3
     {
         return std::sqrt(magnitude_squared());
     }
+
+    // if close to zero in all dimensions
+    bool near_zero() const
+    {
+        const double s = 1e-8;
+        return (fabs(x) < s) && (fabs(y) < s) && (fabs(z) < s);
+    }
 };
 
 using Point3 = Vec3;

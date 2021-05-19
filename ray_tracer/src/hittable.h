@@ -1,12 +1,15 @@
 #pragma once
 
-#include "ray.h"
+#include "ray_tracer.h"
+
+class Material;
 
 // representation of last hit of one ray
 struct HitRecord
 {
-    Point3 hit_point;
-    Vec3   normal;
+    Point3                    hit_point;
+    Vec3                      normal;
+    std::shared_ptr<Material> material;
     // distance to camera
     double distance;
     bool   front_face;
