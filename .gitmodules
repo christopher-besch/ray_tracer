@@ -1,6 +1,6 @@
 [submodule "utils"]
 	path = utils
 	url = https://github.com/christopher-besch/cpp_utils.git
-[submodule "venodr/stb"]
-	path = venodr/stb
+[submodule "vendor/stb"]
+	path = vendor/stb
 	url = https://github.com/christopher-besch/stb_fork.git
