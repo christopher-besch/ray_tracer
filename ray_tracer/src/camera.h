@@ -1,5 +1,6 @@
 #pragma once
 
+#include "random.h"
 #include "ray_tracer.h"
 
 class Camera
@@ -39,10 +40,10 @@ public:
         m_lens_radius = aperture / 2;
     }
 
-    Ray get_ray(double s, double t) const
+    Ray get_ray(double s, double t, RandomGen& random_gen) const
     {
         // get random ray <- blurr
-        Vec3 random_vec = m_lens_radius * random_in_unit_disk();
+        Vec3 random_vec = m_lens_radius * random_in_unit_disk(random_gen);
         Vec3 offset     = m_u * random_vec.x + m_v * random_vec.y;
 
         // from origin; to lower left corner of viewport but to the right and up

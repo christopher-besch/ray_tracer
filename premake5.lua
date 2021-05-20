@@ -56,6 +56,11 @@ project "ray_tracer"
         "stb"
     }
 
+    filter "not system:windows"
+    links {
+        "pthread"
+    }
+
 project "scene_generator"
     language "C++"
     architecture "x86_64"

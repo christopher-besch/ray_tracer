@@ -1,9 +1,15 @@
+#include "random.h"
 #include "ray_tracer.h"
 
 #include <iostream>
 #include <memory>
 #include <sstream>
+#include <thread>
 #include <vector>
+#ifndef WINDOWS
+#include <pthread.h>
+#endif
+#include <mutex>
 
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
@@ -19,7 +25,7 @@
 #include "scenes.h"
 #include "sphere.h"
 
-Color ray_color(const Ray& ray, const Hittable& world, int depth)
+Color ray_color(const Ray& ray, const Hittable& world, int depth, RandomGen& random_gen)
 {
     HitRecord record;
 
@@ -33,9 +39,9 @@ Color ray_color(const Ray& ray, const Hittable& world, int depth)
         Ray   scattered;
         Color attenuation;
         // does hit material not absorb ray
-        if (record.material->scatter(ray, record, attenuation, scattered))
+        if (record.material->scatter(ray, record, attenuation, scattered, random_gen))
             // shoot reflected ray
-            return attenuation * ray_color(scattered, world, depth - 1);
+            return attenuation * ray_color(scattered, world, depth - 1, random_gen);
         // absorb ray
         return Color(0.0, 0.0, 0.0);
     }
@@ -53,21 +59,29 @@ Color ray_color(const Ray& ray, const Hittable& world, int depth)
            normalized_y * Color(0.5, 0.7, 1.0);
 }
 
-int main(int argc, char* argv[])
+class StatusWatcher
 {
-    // load scene
-    Scene scene;
-    read_scene_file(argv[1], scene);
-    Camera cam = scene.get_cam();
+private:
+    int        m_scanlines_remaining;
+    std::mutex m_print_lock;
 
-    // no alpha
-    constexpr int        channel_count = 3;
-    std::vector<uint8_t> pixels;
-    pixels.reserve(scene.image_width * scene.image_height * channel_count);
+public:
+    StatusWatcher(int scanlines)
+        : m_scanlines_remaining(scanlines) {}
 
-    // render
+    // thread safe
+    void scanline_done()
+    {
+        auto lock = std::unique_lock<std::mutex>(m_print_lock);
+        std::cout << "\rScanlines remaining: " << --m_scanlines_remaining << ' ' << std::flush;
+    }
+};
+
+void render_scanlines(const Scene& scene, const Camera& cam, size_t offset, size_t length, std::vector<uint8_t>& pixels, StatusWatcher& status_watcher)
+{
+    RandomGen random_gen;
     // x and y of result image
-    for (int y = scene.image_height - 1; y >= 0; --y)
+    for (int y = offset; y < offset + length; ++y)
     {
         for (int x = 0; x < scene.image_width; ++x)
         {
@@ -76,15 +90,62 @@ int main(int argc, char* argv[])
             for (int i = 0; i < scene.samples_per_pixel; ++i)
             {
                 // create current ray
-                double normalized_x = (x + random_double()) / (scene.image_width - 1);
-                double normalized_y = (y + random_double()) / (scene.image_height - 1);
-                Ray    ray          = cam.get_ray(normalized_x, normalized_y);
-                pixel_color += ray_color(ray, scene.world, scene.max_depth);
+                double normalized_x = (x + random_gen.next_double()) / (scene.image_width - 1);
+                double normalized_y = (y + random_gen.next_double()) / (scene.image_height - 1);
+                Ray    ray          = cam.get_ray(normalized_x, normalized_y, random_gen);
+                pixel_color += ray_color(ray, scene.world, scene.max_depth, random_gen);
             }
-            write_color(pixels, pixel_color, scene.samples_per_pixel);
+            write_color(pixels, pixel_color, scene.samples_per_pixel, (scene.image_height - 1 - y) * scene.image_width * 3 + x * 3);
         }
-        std::cout << "\rScanlines remaining: " << y << ' ' << std::flush;
+        status_watcher.scanline_done();
     }
+}
+
+int main(int argc, char* argv[])
+{
+    if (argc < 2)
+        raise_error("Please specify the input scene file as the first console parameter.");
+    int thread_amount = 1;
+    if (argc > 2)
+        thread_amount = checked_stoi(argv[2]);
+    if (thread_amount <= 0)
+        raise_error("Dude please, you know I need some threads to play with.");
+
+    // load scene
+    Scene scene;
+    read_scene_file(argv[1], scene);
+    Camera cam = scene.get_cam();
+
+    // no alpha
+    constexpr int        channel_count = 3;
+    std::vector<uint8_t> pixels(scene.image_width * scene.image_height * channel_count);
+
+    // render multi threaded
+    StatusWatcher status_watcher(scene.image_height);
+
+    std::vector<std::thread> thread_pool;
+    thread_pool.resize(thread_amount);
+    int scanlines_per_thread = scene.image_height / thread_amount;
+    // hand rest scanlines evenly to threads
+    int scanlines_rest      = scene.image_height % thread_amount;
+    int scanlines_rest_left = scanlines_rest;
+    for (int i = 0; i < thread_amount; ++i)
+    {
+        size_t offset = i * scanlines_per_thread + scanlines_rest - scanlines_rest_left;
+        size_t length;
+        // when there are rest scanlines left to be assigned
+        if (scanlines_rest_left)
+        {
+            --scanlines_rest_left;
+            length = scanlines_per_thread + 1;
+        }
+        else
+            length = scanlines_per_thread;
+        thread_pool[i] = std::thread(&render_scanlines, std::ref(scene), std::ref(cam), offset, length, std::ref(pixels), std::ref(status_watcher));
+    }
+
+    for (std::thread& thread : thread_pool)
+        thread.join();
     std::cout << "\nSaving file..." << std::endl;
 
     stbi_write_png("out.png", scene.image_width, scene.image_height, channel_count,

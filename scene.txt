@@ -1,21 +1,21 @@
 aspect_ratio=1.7777777777777777
-image_height=420
-samples_per_pixel=1
-max_depth=2
+image_height=4320
+samples_per_pixel=100
+max_depth=50
 vfov=90
 lookfrom=0 0 0
-lookat=0 0 1
+lookat=0 0 -1
 vup=0 1 0
 focus_dist=10
 aperture=0
 // materials (Lambertian: r g b, Dielectric: index_of_refrection, Metal: r g b fuzziness)
 l 0.8 0.8 0.0
 l 0.1 0.2 0.5
-d 1.0
+d 1.45
 m 0.8 0.6 0.2 0.0
 // hittables Sphere(x y z radius material_index)
 s 0.0 -100.5 -1.0 100.0 0
 s 0.0 0.0 -1.0 0.5 1
 s -1.0 0.0 -1.0 0.4 2
-s -1.0 0.0 -1.0 0.5 3
+s 1.0 0.0 -1.0 0.5 3
 

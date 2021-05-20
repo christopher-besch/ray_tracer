@@ -2,14 +2,16 @@
 
 #include "ray_tracer.h"
 
+#include <string>
+
 class Material;
 
 // representation of last hit of one ray
 struct HitRecord
 {
-    Point3                    hit_point;
-    Vec3                      normal;
-    std::shared_ptr<Material> material;
+    Point3    hit_point;
+    Vec3      normal;
+    Material* material;
     // distance to camera
     double distance;
     bool   front_face;
@@ -25,5 +27,9 @@ struct HitRecord
 class Hittable
 {
 public:
+    virtual ~Hittable() = default;
+
     virtual bool hit(const Ray& ray, double t_min, double t_max, HitRecord& record) const = 0;
+
+    virtual std::string to_str() const = 0;
 };

@@ -38,7 +38,7 @@ OBJDIR = ../bin-int/Debug-linux-x86_64/ray_tracer
 DEFINES += -DDEBUG -DIDE -DLINUX
 ALL_CFLAGS += $(CFLAGS) $(ALL_CPPFLAGS) -m64 -g
 ALL_CXXFLAGS += $(CXXFLAGS) $(ALL_CPPFLAGS) -m64 -g -std=c++14
-LIBS += ../bin/Debug-linux-x86_64/utils/libutils.a ../bin/Debug-linux-x86_64/stb/libstb.a
+LIBS += ../bin/Debug-linux-x86_64/utils/libutils.a ../bin/Debug-linux-x86_64/stb/libstb.a -lpthread
 LDDEPS += ../bin/Debug-linux-x86_64/utils/libutils.a ../bin/Debug-linux-x86_64/stb/libstb.a
 ALL_LDFLAGS += $(LDFLAGS) -L/usr/lib64 -m64
 
@@ -49,7 +49,7 @@ OBJDIR = ../bin-int/Release-linux-x86_64/ray_tracer
 DEFINES += -DRELEASE -DIDE -DLINUX
 ALL_CFLAGS += $(CFLAGS) $(ALL_CPPFLAGS) -m64 -O2 -g
 ALL_CXXFLAGS += $(CXXFLAGS) $(ALL_CPPFLAGS) -m64 -O2 -g -std=c++14
-LIBS += ../bin/Release-linux-x86_64/utils/libutils.a ../bin/Release-linux-x86_64/stb/libstb.a
+LIBS += ../bin/Release-linux-x86_64/utils/libutils.a ../bin/Release-linux-x86_64/stb/libstb.a -lpthread
 LDDEPS += ../bin/Release-linux-x86_64/utils/libutils.a ../bin/Release-linux-x86_64/stb/libstb.a
 ALL_LDFLAGS += $(LDFLAGS) -L/usr/lib64 -m64
 
@@ -60,7 +60,7 @@ OBJDIR = ../bin-int/Dist-linux-x86_64/ray_tracer
 DEFINES += -DDIST -DLINUX
 ALL_CFLAGS += $(CFLAGS) $(ALL_CPPFLAGS) -m64 -O2
 ALL_CXXFLAGS += $(CXXFLAGS) $(ALL_CPPFLAGS) -m64 -O2 -std=c++14
-LIBS += ../bin/Dist-linux-x86_64/utils/libutils.a ../bin/Dist-linux-x86_64/stb/libstb.a
+LIBS += ../bin/Dist-linux-x86_64/utils/libutils.a ../bin/Dist-linux-x86_64/stb/libstb.a -lpthread
 LDDEPS += ../bin/Dist-linux-x86_64/utils/libutils.a ../bin/Dist-linux-x86_64/stb/libstb.a
 ALL_LDFLAGS += $(LDFLAGS) -L/usr/lib64 -m64 -s
 

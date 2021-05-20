@@ -29,10 +29,16 @@ struct Scene
     double focus_dist;
     double aperture;
 
-    std::vector<std::shared_ptr<Material>> materials;
-    HittableList                           world;
+    std::vector<Material*> materials;
+    HittableList           world;
 
     Scene() {}
+
+    ~Scene()
+    {
+        for (Material* material : materials)
+            delete material;
+    }
 
     void calc_width()
     {
@@ -132,16 +138,16 @@ inline void read_scene_file(std::string file_path, Scene& scene)
             {
             case 'l':
                 albedo = get_next_vec3(input_buffer_ss);
-                scene.materials.push_back(std::make_shared<Lambertian>(albedo));
+                scene.materials.push_back(new Lambertian(albedo));
                 break;
             case 'd':
                 ior = get_next_double(input_buffer_ss);
-                scene.materials.push_back(std::make_shared<Dielectric>(ior));
+                scene.materials.push_back(new Dielectric(ior));
                 break;
             case 'm':
                 albedo    = get_next_vec3(input_buffer_ss);
                 fuzziness = get_next_double(input_buffer_ss);
-                scene.materials.push_back(std::make_shared<Metal>(albedo, fuzziness));
+                scene.materials.push_back(new Metal(albedo, fuzziness));
                 break;
             // found second comment
             default:
@@ -166,7 +172,7 @@ inline void read_scene_file(std::string file_path, Scene& scene)
                 position     = get_next_vec3(input_buffer_ss);
                 radius       = get_next_double(input_buffer_ss);
                 material_idx = get_next_int(input_buffer_ss);
-                scene.world.add(std::make_shared<Sphere>(position, radius, scene.materials[material_idx]));
+                scene.world.add(new Sphere(position, radius, scene.materials[material_idx]));
                 break;
             // found more comments
             default:

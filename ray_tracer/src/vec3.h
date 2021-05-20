@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cmath>
+#include <ostream>
 
 #include "random.h"
 
@@ -104,6 +105,11 @@ struct Vec3
         const double s = 1e-8;
         return (fabs(x) < s) && (fabs(y) < s) && (fabs(z) < s);
     }
+
+    friend std::ostream& operator<<(std::ostream& out, const Vec3& data)
+    {
+        return out << "<Vec3-like " << data.x << ", " << data.y << ", " << data.z << ">";
+    }
 };
 
 using Point3 = Vec3;
@@ -135,35 +141,30 @@ inline Vec3 unit_vector(Vec3 vec)
     return vec / vec.magnitude();
 }
 
-inline Vec3 random_vector()
+inline Vec3 random_vector(RandomGen& random_gen)
 {
-    return Vec3(random_double(), random_double(), random_double());
+    return Vec3(random_gen.next_double(), random_gen.next_double(), random_gen.next_double());
 }
 
-inline Vec3 random_vector(double min, double max)
+inline Vec3 random_vector(double min, double max, RandomGen& random_gen)
 {
-    return Vec3(random_double(min, max), random_double(min, max), random_double(min, max));
-}
-
-inline Vec3 random_in_unit_sphere()
-{
-    while (true)
-    {
-        Vec3 point = random_vector(-1, 1);
-        if (point.magnitude_squared() >= 1) continue;
-        return point;
-    }
+    return Vec3(random_gen.next_double(min, max), random_gen.next_double(min, max), random_gen.next_double(min, max));
 }
 
 // on surface of unit sphere
-inline Vec3 random_unit_vector()
+inline Vec3 random_unit_vector(RandomGen& random_gen)
 {
-    return unit_vector(random_in_unit_sphere());
+    return unit_vector(random_vector(-1.0, 1.0, random_gen));
 }
 
-inline Vec3 random_in_hemisphere(const Vec3& normal)
+inline Vec3 random_in_unit_sphere(RandomGen& random_gen)
 {
-    Vec3 in_unit_sphere = random_in_unit_sphere();
+    return random_unit_vector(random_gen) * random_gen.next_double();
+}
+
+inline Vec3 random_in_hemisphere(const Vec3& normal, RandomGen& random_gen)
+{
+    Vec3 in_unit_sphere = random_in_unit_sphere(random_gen);
     // in same hemisphere as normal
     if (dot_product(in_unit_sphere, normal) > 0.0)
         return in_unit_sphere;
@@ -171,11 +172,11 @@ inline Vec3 random_in_hemisphere(const Vec3& normal)
         return -in_unit_sphere;
 }
 
-inline Vec3 random_in_unit_disk()
+inline Vec3 random_in_unit_disk(RandomGen& random_gen)
 {
     while (true)
     {
-        Vec3 p(random_double(-1, 1), random_double(-1, 1), 0);
+        Vec3 p(random_gen.next_double(-1, 1), random_gen.next_double(-1, 1), 0);
         if (p.magnitude_squared() >= 1.0) continue;
         return p;
     }
