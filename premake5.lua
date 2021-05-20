@@ -56,6 +56,31 @@ project "ray_tracer"
         "stb"
     }
 
+project "scene_generator"
+    language "C++"
+    architecture "x86_64"
+    cppdialect "C++14"
+    kind "ConsoleApp"
+
+    location "%{prj.name}"
+    targetdir ("bin/" .. outputdir .. "/%{prj.name}")
+    objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
+
+    files {
+        "%{prj.name}/src/**.h",
+        "%{prj.name}/src/**.cpp"
+    }
+
+    -- for #include with ""
+    includedirs {
+        "%{prj.name}/src",
+        "utils/src"
+    }
+
+    links {
+        "utils"
+    }
+
 -- dependencies
 include "utils"
 include "vendor/stb"

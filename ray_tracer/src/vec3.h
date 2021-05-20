@@ -171,6 +171,16 @@ inline Vec3 random_in_hemisphere(const Vec3& normal)
         return -in_unit_sphere;
 }
 
+inline Vec3 random_in_unit_disk()
+{
+    while (true)
+    {
+        Vec3 p(random_double(-1, 1), random_double(-1, 1), 0);
+        if (p.magnitude_squared() >= 1.0) continue;
+        return p;
+    }
+}
+
 // reflect <incoming> off of surface with normal <normal>
 inline Vec3 reflect(const Vec3& incoming, const Vec3& normal)
 {
@@ -185,14 +195,4 @@ inline Vec3 refract(const Vec3& in, const Vec3& normal, double eta_in_over_eta_t
     Vec3   trans_perp     = eta_in_over_eta_trans * (in + cos_theta * normal);
     Vec3   trans_parallel = -sqrt(fabs(1.0 - trans_perp.magnitude_squared())) * normal;
     return trans_perp + trans_parallel;
-}
-
-inline Vec3 random_in_unit_disk()
-{
-    while (true)
-    {
-        Vec3 p(random_double(-1, 1), random_double(-1, 1), 0);
-        if (p.magnitude_squared() >= 1.0) continue;
-        return p;
-    }
 }

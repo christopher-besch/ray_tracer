@@ -8,6 +8,25 @@
             "-DLINUX",
             "-Isrc",
             "-I../utils/src",
+            "-m64",
+            "-g",
+            "-std=c++14",
+            "-o",
+            "../bin-int/Debug-linux-x86_64/scene_generator/main.o",
+            "src/main.cpp"
+        ],
+        "directory": "/home/chris/files/cpp/ray_tracer/scene_generator",
+        "file": "src/main.cpp"
+    },
+    {
+        "arguments": [
+            "g++",
+            "-c",
+            "-DDEBUG",
+            "-DIDE",
+            "-DLINUX",
+            "-Isrc",
+            "-I../utils/src",
             "-isystem",
             "../vendor/stb",
             "-m64",

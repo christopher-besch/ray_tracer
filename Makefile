@@ -10,16 +10,19 @@ endif
 
 ifeq ($(config),debug)
   ray_tracer_config = debug
+  scene_generator_config = debug
   utils_config = debug
   stb_config = debug
 
 else ifeq ($(config),release)
   ray_tracer_config = release
+  scene_generator_config = release
   utils_config = release
   stb_config = release
 
 else ifeq ($(config),dist)
   ray_tracer_config = dist
+  scene_generator_config = dist
   utils_config = dist
   stb_config = dist
 
@@ -27,7 +30,7 @@ else
   $(error "invalid configuration $(config)")
 endif
 
-PROJECTS := ray_tracer utils stb
+PROJECTS := ray_tracer scene_generator utils stb
 
 .PHONY: all clean help $(PROJECTS) 
 
@@ -37,6 +40,12 @@ ray_tracer: utils stb
 ifneq (,$(ray_tracer_config))
 	@echo "==== Building ray_tracer ($(ray_tracer_config)) ===="
 	@${MAKE} --no-print-directory -C ray_tracer -f Makefile config=$(ray_tracer_config)
+endif
+
+scene_generator: utils
+ifneq (,$(scene_generator_config))
+	@echo "==== Building scene_generator ($(scene_generator_config)) ===="
+	@${MAKE} --no-print-directory -C scene_generator -f Makefile config=$(scene_generator_config)
 endif
 
 utils:
@@ -53,6 +62,7 @@ endif
 
 clean:
 	@${MAKE} --no-print-directory -C ray_tracer -f Makefile clean
+	@${MAKE} --no-print-directory -C scene_generator -f Makefile clean
 	@${MAKE} --no-print-directory -C utils/utils -f Makefile clean
 	@${MAKE} --no-print-directory -C vendor/stb -f Makefile clean
 
@@ -68,6 +78,7 @@ help:
 	@echo "   all (default)"
 	@echo "   clean"
 	@echo "   ray_tracer"
+	@echo "   scene_generator"
 	@echo "   utils"
 	@echo "   stb"
 	@echo ""

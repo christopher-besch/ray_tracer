@@ -11,6 +11,7 @@ public:
     virtual bool scatter(const Ray& ray_in, const HitRecord& record, Color& attenuation, Ray& scattered) const = 0;
 };
 
+// random reflection
 class Lambertian : public Material
 {
 private:
@@ -20,6 +21,7 @@ public:
     Lambertian(const Color& albedo)
         : m_albedo(albedo) {}
 
+    // does create scattered ray?
     virtual bool scatter(const Ray& ray_in, const HitRecord& record, Color& attenuation, Ray& scattered) const override
     {
 #if 1
@@ -40,6 +42,7 @@ public:
     }
 };
 
+// exact reflection
 class Metal : public Material
 {
 private:
@@ -62,6 +65,7 @@ public:
     }
 };
 
+// exact reflection or exact refraction
 class Dielectric : public Material
 {
 private:
@@ -75,7 +79,7 @@ public:
     virtual bool scatter(const Ray& ray_in, const HitRecord& record, Color& attenuation, Ray& scattered) const override
     {
         attenuation = Color(1.0, 1.0, 1.0);
-        // ior of air is 0
+        // ior of air is 1
         // looking at sphere?
         // incident ray; transmission ray
         // todo: store ior in ray

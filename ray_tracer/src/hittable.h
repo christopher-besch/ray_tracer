@@ -14,9 +14,9 @@ struct HitRecord
     double distance;
     bool   front_face;
 
+    // is ray outside object?
     inline void set_face_normal(const Ray& ray, const Vec3& outward_normal)
     {
-        // is ray outside object?
         front_face = dot_product(ray.inclination, outward_normal) < 0;
         normal     = front_face ? outward_normal : -outward_normal;
     }
