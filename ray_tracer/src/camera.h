@@ -18,7 +18,7 @@ public:
     Camera(Point3 lookfrom, Point3 lookat, Vec3 vup, double vfov, double aspect_ratio, double aperture, double focus_dist)
     {
         double theta = degrees_to_radians(vfov);
-        // half viewport width
+        // half viewport height
         double h               = tan(theta / 2);
         double viewport_height = 2.0 * h;
         double viewport_width  = aspect_ratio * viewport_height;
@@ -41,13 +41,12 @@ public:
 
     Ray get_ray(double s, double t) const
     {
+        // get random ray <- blurr
         Vec3 random_vec = m_lens_radius * random_in_unit_disk();
         Vec3 offset     = m_u * random_vec.x + m_v * random_vec.y;
 
         // from origin; to lower left corner of viewport but to the right and up
-        // to current pixel; fyi: ray only touches corners of viewport; penetrates
-        // middle -> gradient is not horizontally constant -> you can see a
-        // curvature in the background
+        // to current pixel
         return Ray(m_origin + offset,
                    m_lower_left_corner + s * m_horizontal + t * m_vertical - m_origin - offset);
     }

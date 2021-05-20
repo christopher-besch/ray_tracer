@@ -8,7 +8,7 @@
 
 #include "vec3.h"
 
-// write pixel to pixels and increase index
+// write pixel to pixels
 void write_color(std::vector<uint8_t>& pixels, Color pixel, int samples_per_pixel)
 {
     pixel /= samples_per_pixel;

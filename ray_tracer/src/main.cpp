@@ -1,6 +1,5 @@
 #include "ray_tracer.h"
 
-#include <fstream>
 #include <iostream>
 #include <memory>
 #include <sstream>
@@ -32,6 +31,7 @@ Color ray_color(const Ray& ray, const Hittable& world, int depth)
     {
         Ray   scattered;
         Color attenuation;
+        // does hit material not absorb ray
         if (record.material->scatter(ray, record, attenuation, scattered))
             // shoot reflected ray
             return attenuation * ray_color(scattered, world, depth - 1);
@@ -40,6 +40,9 @@ Color ray_color(const Ray& ray, const Hittable& world, int depth)
     }
 
     // or background
+    // fyi: ray only touches corners of viewport; penetrates
+    // middle -> gradient is not horizontally constant -> you can see a
+    // curvature in the background
     Vec3 direction = unit_vector(ray.inclination);
     // from 0.0 to 1.0
     //                                         <- half the height of the viewport
@@ -97,7 +100,7 @@ int main()
     {
         for (int x = 0; x < image_width; ++x)
         {
-            // keep adding on this pixel; divide in end
+            // anti-aliasing: keep adding on this pixel; divide in end
             Color pixel_color(0.0, 0.0, 0.0);
             for (int i = 0; i < samples_per_pixel; ++i)
             {
@@ -113,8 +116,6 @@ int main()
     }
     std::cout << "\nSaving file..." << std::endl;
 
-    // stbi_write_png("out.png", width, height, channel_num,
-    // reinterpret_cast<const void *>(&pixels[0]), width * channel_num);
     stbi_write_png("out.png", image_width, image_height, channel_count,
                    pixels.data(), image_width * channel_count);
     std::cout << "All done; enjoy!" << std::endl;
