@@ -42,7 +42,7 @@ endif
 utils:
 ifneq (,$(utils_config))
 	@echo "==== Building utils ($(utils_config)) ===="
-	@${MAKE} --no-print-directory -C utils -f Makefile config=$(utils_config)
+	@${MAKE} --no-print-directory -C utils/utils -f Makefile config=$(utils_config)
 endif
 
 stb:
@@ -53,7 +53,7 @@ endif
 
 clean:
 	@${MAKE} --no-print-directory -C ray_tracer -f Makefile clean
-	@${MAKE} --no-print-directory -C utils -f Makefile clean
+	@${MAKE} --no-print-directory -C utils/utils -f Makefile clean
 	@${MAKE} --no-print-directory -C vendor/stb -f Makefile clean
 
 help:
