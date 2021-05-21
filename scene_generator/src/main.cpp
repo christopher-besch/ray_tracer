@@ -82,6 +82,7 @@ void read_font(std::string file_path, Font& font)
     }
 }
 
+// turn single line with font in list of pixels
 void pre_render_line(const std::string& line, std::vector<std::vector<bool>>& pixel_lines, const Font& font)
 {
     // create pixel lines
@@ -98,6 +99,7 @@ void pre_render_line(const std::string& line, std::vector<std::vector<bool>>& pi
     }
 }
 
+// turn text with font in list of pixels
 void pre_render(const std::string& text, std::vector<std::vector<bool>>& pixel_lines, const Font& font)
 {
     std::string       input_buffer;
@@ -112,22 +114,74 @@ void pre_render(const std::string& text, std::vector<std::vector<bool>>& pixel_l
     }
 }
 
+void render(const std::vector<std::vector<bool>>& pixel_lines, std::string& output)
+{
+    constexpr double x_space_per_sphere = 0.1;
+    constexpr double y_space_per_sphere = 0.1;
+    constexpr double radius             = 0.05;
+    constexpr double z                  = -1.0;
+
+    // append to output
+    std::stringstream output_buffer(output);
+
+    int width  = 0;
+    int height = pixel_lines.size();
+    for (int y = 0; y < height; ++y)
+    {
+        if (pixel_lines[y].size() > width)
+            width = pixel_lines[y].size();
+        for (int x = 0; x < pixel_lines[y].size(); ++x)
+        {
+            if (!(x % 2) && pixel_lines[y][x])
+            {
+                // todo: random material
+                output_buffer << "s "
+                              // take only second x-coordinates
+                              << x_space_per_sphere * x / 2 << " "
+                              << y_space_per_sphere * (height - 1 - y) << " "
+                              << z << " "
+                              << radius << " "
+                              << "0" << std::endl;
+            }
+        }
+    }
+    std::cerr << "width: " << x_space_per_sphere * width / 2 << ", height: " << y_space_per_sphere * height << ", z:" << z << ", radius: " << radius << std::endl;
+    output = output_buffer.str();
+}
+
 int main(int argc, char* argv[])
 {
-    std::string file_path = std::string("fonts") + file_slash + "block.txt";
+    // load font
+    if (argc < 2)
+        raise_error("Please specify the input text file as the first console parameter.");
+    std::string file_path = get_virtual_cwd(argv[0]) + std::string("fonts") + file_slash + "block.txt";
     Font        font;
     read_font(file_path, font);
-    std::string                    text = argv[1];
+
+    // read text
+    std::fstream file;
+    file.open(argv[1]);
+    if (!file)
+        raise_error("Can't open input file " << argv[1] << "!");
+    std::ostringstream text_ss;
+    text_ss << file.rdbuf();
+    std::string text = text_ss.str();
+
+    // pre render
     std::vector<std::vector<bool>> pixel_lines;
     pre_render(text, pixel_lines, font);
 
+    // debug
     for (std::vector<bool> line : pixel_lines)
     {
         for (int i = 0; i < line.size(); ++i)
-        {
             if (i % 2)
-                std::cout << (line[i] ? '#' : ' ');
-        }
-        std::cout << std::endl;
+                std::cerr << (line[i] ? '#' : ' ');
+        std::cerr << std::endl;
     }
+    // render
+    std::string output;
+    render(pixel_lines, output);
+    std::cout << output << std::endl;
+    return 0;
 }
