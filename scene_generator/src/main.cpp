@@ -1,3 +1,4 @@
+#include "random.h"
 #include "utils.h"
 
 #include <bits/stdint-uintn.h>
@@ -114,7 +115,7 @@ void pre_render(const std::string& text, std::vector<std::vector<bool>>& pixel_l
     }
 }
 
-void render(const std::vector<std::vector<bool>>& pixel_lines, std::string& output)
+void render(const std::vector<std::vector<bool>>& pixel_lines, std::string& output, int materials_amount, RandomGen& random_gen)
 {
     constexpr double x_space_per_sphere = 0.1;
     constexpr double y_space_per_sphere = 0.1;
@@ -141,11 +142,15 @@ void render(const std::vector<std::vector<bool>>& pixel_lines, std::string& outp
                               << y_space_per_sphere * (height - 1 - y) << " "
                               << z << " "
                               << radius << " "
-                              << "0" << std::endl;
+                              << random_gen.next_int(0, materials_amount - 1) << std::endl;
             }
         }
     }
-    std::cerr << "width: " << x_space_per_sphere * width / 2 << ", height: " << y_space_per_sphere * height << ", z:" << z << ", radius: " << radius << std::endl;
+    std::cerr << "width: " << x_space_per_sphere * width / 2
+              << ", height: " << y_space_per_sphere * height
+              << ", z:" << z
+              << ", radius: " << radius
+              << ", materials amount: " << materials_amount << std::endl;
     output = output_buffer.str();
 }
 
@@ -158,7 +163,7 @@ int main(int argc, char* argv[])
     Font        font;
     read_font(file_path, font);
 
-    // read text
+    // read input
     std::fstream file;
     file.open(argv[1]);
     if (!file)
@@ -166,6 +171,12 @@ int main(int argc, char* argv[])
     std::ostringstream text_ss;
     text_ss << file.rdbuf();
     std::string text = text_ss.str();
+
+    int materials_amount = 1;
+    if (argc > 2)
+        materials_amount = checked_stoi(argv[2]);
+    if (materials_amount <= 0)
+        raise_error("At least one material is required.");
 
     // pre render
     std::vector<std::vector<bool>> pixel_lines;
@@ -181,7 +192,8 @@ int main(int argc, char* argv[])
     }
     // render
     std::string output;
-    render(pixel_lines, output);
+    RandomGen   random_gen;
+    render(pixel_lines, output, materials_amount, random_gen);
     std::cout << output << std::endl;
     return 0;
 }
