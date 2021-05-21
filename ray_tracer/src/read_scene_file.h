@@ -149,8 +149,11 @@ inline void read_scene_file(std::string file_path, Scene& scene)
                 fuzziness = get_next_double(input_buffer_ss);
                 scene.materials.push_back(new Metal(albedo, fuzziness));
                 break;
-            // found second comment
+            case '/':
+                // comment
+                break;
             default:
+                // end of materials
                 goto hittable;
             }
         }
@@ -176,7 +179,7 @@ inline void read_scene_file(std::string file_path, Scene& scene)
                 break;
             // found more comments
             default:
-                return;
+                break;
             }
         }
     }

@@ -67,7 +67,10 @@ private:
 
 public:
     StatusWatcher(int scanlines)
-        : m_scanlines_remaining(scanlines) {}
+        : m_scanlines_remaining(scanlines)
+    {
+        std::cout << "\rScanlines remaining: " << m_scanlines_remaining << ' ' << std::flush;
+    }
 
     // thread safe
     void scanline_done()
@@ -115,6 +118,9 @@ int main(int argc, char* argv[])
     Scene scene;
     read_scene_file(argv[1], scene);
     Camera cam = scene.get_cam();
+
+    double perfect_focus_dist = (scene.lookfrom - scene.lookat).magnitude();
+    std::cout << "The perfect focus distance would be: " << perfect_focus_dist << std::endl;
 
     // no alpha
     constexpr int        channel_count = 3;
