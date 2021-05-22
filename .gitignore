@@ -35,5 +35,9 @@
 bin/*
 bin-int/*
 
-MakeFile
+Makefile
 .vscode/*
+
+# clangd
+.clangd
+
