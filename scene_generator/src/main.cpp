@@ -73,7 +73,7 @@ void render(const std::vector<std::vector<bool>>& pixel_lines, std::string& outp
 int main(int argc, char* argv[])
 {
     // load font
-    std::string file_path = get_virtual_cwd(argv[0]) + std::string("fonts") + file_slash + "block.txt";
+    std::string file_path = get_exec_dir(argv[0]) + std::string("fonts") + file_slash + "block.txt";
     Font        font;
     read_font(file_path, font);
 
