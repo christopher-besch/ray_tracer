@@ -38,6 +38,3 @@ bin-int/*
 Makefile
 .vscode/*
 
-# clangd
-.clangd
-
