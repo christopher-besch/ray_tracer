@@ -1,6 +1,6 @@
 #pragma once
 
-#include "math.h"
+#include "math_def.h"
 #include "random.h"
 
 #include "ray.h"
