@@ -52,8 +52,7 @@ project "ray_tracer"
     }
 
     links {
-        "utils",
-        "stb"
+        "utils"
     }
 
     filter "not system:windows"
