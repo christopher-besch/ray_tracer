@@ -49,6 +49,7 @@ inline void read_settings_file(std::string file_path, Settings& settings)
         std::ostringstream text_ss;
         text_ss << file.rdbuf();
         settings.text = text_ss.str();
+        file.close();
     }
     catch (const std::exception& ex)
     {

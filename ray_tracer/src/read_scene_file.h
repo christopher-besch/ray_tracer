@@ -182,6 +182,7 @@ inline void read_scene_file(std::string file_path, Scene& scene)
                 break;
             }
         }
+        file.close();
     }
     catch (const std::exception& ex)
     {
