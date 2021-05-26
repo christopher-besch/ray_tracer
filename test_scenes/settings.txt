@@ -1,6 +1,0 @@
-x_space_per_sphere=0.1
-y_space_per_sphere=0.1
-radius=0.05
-z=-1.0
-materials_amount=18
-Ray Tracer

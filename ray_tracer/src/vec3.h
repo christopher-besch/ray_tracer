@@ -48,6 +48,7 @@ struct Vec3
     {
         return Vec3(x - other.x, y - other.y, z - other.z);
     }
+    // shur product
     Vec3 operator*(const Vec3& other) const
     {
         return Vec3(x * other.x, y * other.y, z * other.z);
@@ -75,6 +76,7 @@ struct Vec3
         z -= other.z;
         return *this;
     }
+    // shur product
     Vec3& operator*=(double scalar)
     {
         x *= scalar;

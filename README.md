@@ -1,6 +1,6 @@
 # Ray Tracer
 
-<img align="center" src="test_scenes/renders/ray_tracer.png">
+<img align="center" src="test_scenes/ray_tracer/render.png">
 
 The project I finished in time but still failed with.
 
